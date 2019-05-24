@@ -6,7 +6,7 @@ Board::Board(const std::array<uint64_t, 3> board, const uint64_t tops) : board(b
 
 Board Board::empty() {
 	const std::array<uint64_t, 3> board = { 0, 0, 0 };
-	const uint64_t tops = 0;
+	const uint64_t tops = 127;
 	return Board(board, tops);
 }
 

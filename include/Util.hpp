@@ -28,3 +28,19 @@ inline size_t playerToIndex(const Color player) {
 	}
 	return 1;
 }
+
+inline std::ostream& printBitboard(std::ostream &strm, const uint64_t bb) {
+	for (size_t j = 7; j >= 0 && j < 8; --j) {
+		for (size_t i = 0; i < 8; ++i) {
+			const size_t pos = i + j * 8;
+			if ((bb >> pos) & 1) {
+				strm << "X";
+			} else {
+				strm << ".";
+			}
+		}
+		strm << "\n";
+	}
+	strm << "\n";
+	return strm;
+}
