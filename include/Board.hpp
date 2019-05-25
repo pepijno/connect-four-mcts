@@ -18,8 +18,9 @@ class Board
 		static Board empty();
 
 		uint64_t getBoard(const Color color) const;
+		Color getPlayer() const { return this->currentPlayer; };
 
-		void doMove(const uint8_t column, const Color side);
+		void doMove(const uint8_t column);
 };
 
 inline uint64_t Board::getBoard(const Color color) const {
@@ -52,5 +53,6 @@ inline std::ostream& operator<<(std::ostream &strm, const Board &board) {
 		strm << "\n";
 	}
 	strm << "\n";
+	strm << "Player: " << board.getPlayer() << "\n";
 	return strm;
 }

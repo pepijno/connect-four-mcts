@@ -29,6 +29,16 @@ inline size_t playerToIndex(const Color player) {
 	return 1;
 }
 
+inline std::ostream& operator<<(std::ostream& strm, const Color& color) {
+	if (color == Color::White) {
+		return strm << "White";
+	}
+	if (color == Color::Black) {
+		return strm << "Black";
+	}
+	return strm << "Both";
+}
+
 inline std::ostream& printBitboard(std::ostream &strm, const uint64_t bb) {
 	for (size_t j = 7; j >= 0 && j < 8; --j) {
 		for (size_t i = 0; i < 8; ++i) {

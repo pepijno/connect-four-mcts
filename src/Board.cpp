@@ -10,11 +10,13 @@ Board Board::empty() {
 	return Board(board, tops);
 }
 
-void Board::doMove(const uint8_t column, const Color side) {
+void Board::doMove(const uint8_t column) {
 	assert(column >= 0);
 	assert(column < 8);
 
 	const uint64_t top = this->tops & columns[column];
+
+	const Color side = this->currentPlayer;
 
 	this->board[playerToIndex(side)] |= top;
 	this->board[2] |= top;
