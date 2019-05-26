@@ -15,6 +15,8 @@ const std::array<uint64_t, 8> columns = {
 
 enum class Color { White, Black, BOTH };
 
+typedef uint8_t Move;
+
 inline Color otherPlayer(const Color side) {
 	if (side == Color::White) {
 		return Color::Black;

@@ -2,6 +2,7 @@
 
 #include <array>
 #include <iostream>
+#include <vector>
 
 #include "Util.hpp"
 
@@ -15,12 +16,18 @@ class Board
 		void switchPlayer();
 	public:
 		Board(const std::array<uint64_t, 3> board, const uint64_t tops);
+		Board(const Board& board) {
+			this->board = board.board;
+			this->currentPlayer = board.currentPlayer;
+			this->tops = board.tops;
+		}
 		static Board empty();
 
 		uint64_t getBoard(const Color color) const;
 		Color getPlayer() const { return this->currentPlayer; };
 
-		void doMove(const uint8_t column);
+		std::vector<Move> moveList() const;
+		void doMove(const Move column);
 };
 
 inline uint64_t Board::getBoard(const Color color) const {

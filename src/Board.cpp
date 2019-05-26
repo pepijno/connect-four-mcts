@@ -10,7 +10,20 @@ Board Board::empty() {
 	return Board(board, tops);
 }
 
-void Board::doMove(const uint8_t column) {
+std::vector<Move> Board::moveList() const {
+	uint64_t filteredTops = this->tops & 0x0000007f7f7f7f7f;
+	std::vector<Move> moves;
+
+	while(filteredTops != 0) {
+		const size_t sq = __builtin_ctzll(filteredTops);
+		moves.push_back(sq & 7);
+		filteredTops &= filteredTops - 1;
+	}
+
+	return moves;
+}
+
+void Board::doMove(const Move column) {
 	assert(column >= 0);
 	assert(column < 8);
 
