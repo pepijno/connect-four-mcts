@@ -9,6 +9,7 @@ int main() {
 	board.doMove(3);
 	board.doMove(3);
 	board.doMove(2);
+	board.randomGame();
 	std::cout << board << std::endl;
 
 	auto moves = board.moveList();

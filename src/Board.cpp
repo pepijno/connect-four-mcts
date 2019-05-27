@@ -1,6 +1,7 @@
 #include "Board.hpp"
 
 #include <cassert>
+#include <random>
 
 Board::Board(const std::array<uint64_t, 3> board, const uint64_t tops) : board(board), tops(tops), currentPlayer(Color::White) {}
 
@@ -36,4 +37,41 @@ void Board::doMove(const Move column) {
 
 	this->tops ^= top | (top << 8);
 	this->switchPlayer();
+}
+
+bool Board::lastMoveWasWinningMove() const {
+	uint64_t b = this->board[playerToIndex(otherPlayer(this->currentPlayer))];
+	uint64_t t = b & (b >> 8);
+	if (t & (t >> 16)) {
+		return true;
+	}
+	t = b & (b >> 1);
+	if (t & (t >> 2)) {
+		return true;
+	}
+	t = b & (b >> 7);
+	if (t & (t >> 14)) {
+		return true;
+	}
+	t = b & (b >> 9);
+	if (t & (t >> 18)) {
+		return true;
+	}
+	return false;
+}
+
+void Board::randomGame() {
+	std::random_device rd;
+	std::mt19937 rng(rd());
+	while(!this->lastMoveWasWinningMove()) {
+		const std::vector<Move> moveList = this->moveList();
+
+		std::uniform_int_distribution<int> uniform(0, moveList.size() - 1);
+
+		const int index = uniform(rng);
+
+		const Move move = moveList.at(index);
+		
+		this->doMove(move);
+	}
 }

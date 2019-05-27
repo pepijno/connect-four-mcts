@@ -28,6 +28,10 @@ class Board
 
 		std::vector<Move> moveList() const;
 		void doMove(const Move column);
+
+		bool lastMoveWasWinningMove() const;
+
+		void randomGame();
 };
 
 inline uint64_t Board::getBoard(const Color color) const {
