@@ -13,7 +13,7 @@ const std::array<uint64_t, 8> columns = {
 	0x8080808080808080
 };
 
-enum class Color { White, Black, BOTH };
+enum class Color { White, Black, Both };
 
 typedef uint8_t Move;
 

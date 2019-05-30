@@ -1,5 +1,5 @@
 CC=g++
-CPPFLAGS=-std=c++1y -Wall
+CPPFLAGS=-std=c++1y -Wall -g
 MAIN=main.o
 EXECUTABLE=bin/cfmcts
 INCLDIR=include/

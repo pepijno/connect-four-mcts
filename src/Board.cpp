@@ -3,7 +3,7 @@
 #include <cassert>
 #include <random>
 
-Board::Board(const std::array<uint64_t, 3> board, const uint64_t tops) : board(board), tops(tops), currentPlayer(Color::White) {}
+Board::Board(const std::array<uint64_t, 3> board, const uint64_t tops) : board(board), tops(tops), currentPlayer(Color::White), over(false) {}
 
 Board Board::empty() {
 	const std::array<uint64_t, 3> board = { 0, 0, 0 };
@@ -12,7 +12,7 @@ Board Board::empty() {
 }
 
 std::vector<Move> Board::moveList() const {
-	uint64_t filteredTops = this->tops & 0x0000007f7f7f7f7f;
+	uint64_t filteredTops = this->tops & 0x00007f7f7f7f7f7f;
 	std::vector<Move> moves;
 
 	while(filteredTops != 0) {
@@ -38,7 +38,7 @@ void Board::doMove(const Move column) {
 	this->tops ^= top | (top << 8);
 	this->switchPlayer();
 
-	if (this->lastMoveWasWinningMove() || __builtin_popcountll(this->board[2])) {
+	if (this->lastMoveWasWinningMove() || __builtin_popcountll(this->board[2]) == 42) {
 		this->over = true;
 	}
 }
@@ -66,7 +66,7 @@ bool Board::lastMoveWasWinningMove() const {
 
 void Board::randomGame() {
 	std::random_device rd;
-	std::mt19937 rng(rd());
+	std::mt19937 rng(1);
 	while(!this->over) {
 		const std::vector<Move> moveList = this->moveList();
 
@@ -78,4 +78,11 @@ void Board::randomGame() {
 		
 		this->doMove(move);
 	}
+}
+
+Color Board::getWinner() const {
+	if (__builtin_popcountll(this->board[2]) == 42) {
+		return Color::Both;
+	}
+	return this->currentPlayer;
 }
