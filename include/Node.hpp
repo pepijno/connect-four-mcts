@@ -1,16 +1,18 @@
 #include "Board.hpp"
 
-#include <queue>
+#include <vector>
 
 class Node {
 private:
+	Node* parent;
+
 	Board board;
-	std::queue<Move> movesLeft;
+	std::vector<Move> movesLeft;
 	std::vector<Node> children;
 
 	float score;
 	int visits;
 	int winScore;
 public:
-	Node(const Board& board);
+	Node(Node* parent, const Board& board);
 };
