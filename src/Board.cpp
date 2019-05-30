@@ -37,6 +37,10 @@ void Board::doMove(const Move column) {
 
 	this->tops ^= top | (top << 8);
 	this->switchPlayer();
+
+	if (this->lastMoveWasWinningMove() || __builtin_popcountll(this->board[2])) {
+		this->isOver = true;
+	}
 }
 
 bool Board::lastMoveWasWinningMove() const {
@@ -63,7 +67,7 @@ bool Board::lastMoveWasWinningMove() const {
 void Board::randomGame() {
 	std::random_device rd;
 	std::mt19937 rng(rd());
-	while(!this->lastMoveWasWinningMove()) {
+	while(!this->isOver) {
 		const std::vector<Move> moveList = this->moveList();
 
 		std::uniform_int_distribution<int> uniform(0, moveList.size() - 1);

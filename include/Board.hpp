@@ -12,6 +12,7 @@ class Board
 		std::array<uint64_t, 3> board;
 		uint64_t tops;
 		Color currentPlayer;
+		bool isOver;
 
 		void switchPlayer();
 	public:
