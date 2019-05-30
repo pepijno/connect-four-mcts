@@ -7,7 +7,7 @@ private:
 	Node* parent;
 
 	Board board;
-	std::vector<Move> movesLeft;
+	std::vector<Move> moves;
 	std::vector<Node> children;
 
 	float score;
@@ -15,4 +15,12 @@ private:
 	int winScore;
 public:
 	Node(Node* parent, const Board& board);
+
+	bool isTerminal() const;
+	bool isExpanded() const;
+
+	Node expand();
+	Node addChild(const Move move);
+	Node bestChild() const;
+	double uct(const int parentVisits) const;
 };

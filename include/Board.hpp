@@ -12,7 +12,7 @@ class Board
 		std::array<uint64_t, 3> board;
 		uint64_t tops;
 		Color currentPlayer;
-		bool isOver;
+		bool over;
 
 		void switchPlayer();
 	public:
@@ -26,6 +26,7 @@ class Board
 
 		uint64_t getBoard(const Color color) const;
 		Color getPlayer() const { return this->currentPlayer; };
+		bool isOver() const { return this->over; };
 
 		std::vector<Move> moveList() const;
 		void doMove(const Move column);
