@@ -5,13 +5,14 @@
 
 Board::Board(const std::array<uint64_t, 3> board, const uint64_t tops) : board(board), tops(tops), currentPlayer(Color::White), over(false) {}
 
-Board Board::empty() {
+Board::Board() {
 	const std::array<uint64_t, 3> board = { 0, 0, 0 };
 	const uint64_t tops = 127;
-	return Board(board, tops);
+	this->board = board;
+	this->tops = tops;
 }
 
-std::vector<Move> Board::moveList() const {
+const std::vector<Move> Board::moveList() const {
 	uint64_t filteredTops = this->tops & 0x00007f7f7f7f7f7f;
 	std::vector<Move> moves;
 
@@ -44,7 +45,7 @@ void Board::doMove(const Move column) {
 }
 
 bool Board::lastMoveWasWinningMove() const {
-	uint64_t b = this->board[playerToIndex(otherPlayer(this->currentPlayer))];
+	const uint64_t b = this->board[playerToIndex(otherPlayer(this->currentPlayer))];
 	uint64_t t = b & (b >> 8);
 	if (t & (t >> 16)) {
 		return true;

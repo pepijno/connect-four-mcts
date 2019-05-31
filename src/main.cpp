@@ -2,7 +2,7 @@
 #include "Mcts.hpp"
 
 int main() {
-	Board board = Board::empty();
+	Board board;
 	board.doMove(3);
 	board.doMove(4);
 	board.doMove(3);

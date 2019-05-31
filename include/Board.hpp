@@ -17,14 +17,14 @@ class Board
 		void switchPlayer();
 	public:
 		Board(const std::array<uint64_t, 3> board, const uint64_t tops);
-		static Board empty();
+		Board();
 
 		uint64_t getBoard(const Color color) const;
 		Color getPlayer() const { return this->currentPlayer; };
 		Color getWinner() const;
 		bool isOver() const { return this->over; };
 
-		std::vector<Move> moveList() const;
+		const std::vector<Move> moveList() const;
 		void doMove(const Move column);
 
 		bool lastMoveWasWinningMove() const;

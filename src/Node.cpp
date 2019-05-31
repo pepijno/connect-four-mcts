@@ -60,32 +60,9 @@ Node* Node::bestChild() const {
 	Node* bestNode = this->children.front().get();
 	double bestUct = -std::numeric_limits<double>::max();
 
-	Node* bestProvenNode = nullptr;
-	bool allNodesProven = true;
-
 	for (const auto& ptr : this->children) {
-		if (ptr.get()->visits < threshold) {
-			return ptr.get();
-		}
-
-		if (ptr.get()->provenScore == ProvenScore::Win) {
-			return ptr.get();
-		}
-
-		if (ptr.get()->provenScore == ProvenScore::Draw) {
-			bestProvenNode = ptr.get();
+		if (ptr.get()->isProven()) {
 			continue;
-		}
-
-		if (ptr.get()->provenScore == ProvenScore::Loss) {
-			if (!bestProvenNode) {
-				bestProvenNode = ptr.get();
-			}
-			continue;
-		}
-
-		if (ptr.get()->provenScore == ProvenScore::NotProven) {
-			allNodesProven = false;
 		}
 
 		const double uct = ptr.get()->uct(parentVisits);
@@ -96,10 +73,6 @@ Node* Node::bestChild() const {
 		}
 	}
 
-	if (allNodesProven) {
-		return bestProvenNode;
-	}
-
 	return bestNode;
 }
 
@@ -108,8 +81,8 @@ double Node::uct(const int parentVisits) const {
 	return this->score + c * utc_explore;
 }
 
-void Node::print(std::ostream& os, const int level, const int indent) const {
-	std::string ind = std::string(indent, ' ');
+void Node::print(std::ostream& os, const size_t level, const size_t indent) const {
+	const std::string ind = std::string(indent, ' ');
 
 	os << ind << "Visits: " << this->visits << ", "
 		<< "WinScore: " << this->winScore << ", "

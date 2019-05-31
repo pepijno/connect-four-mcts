@@ -22,8 +22,8 @@ class Node {
 private:
 	Node* parent;
 
-	Board board;
-	Move move;
+	const Board board;
+	const Move move;
 	std::vector<Move> moves;
 	std::vector<std::unique_ptr<Node>> children;
 
@@ -34,7 +34,7 @@ private:
 public:
 	Node(Node* parent, const Board& board, const Move move);
 
-	Board getBoard() const { return this->board; };
+	const Board getBoard() const { return this->board; };
 	Node* getParent() const { return this->parent; };
 	ProvenScore getProvenScore() const { return this->provenScore; };
 
@@ -50,5 +50,5 @@ public:
 	void updateWinnerRecursive(const Color Winner);
 	void updateProvenScoreRecursive(const ProvenScore provenScore);
 
-	void print(std::ostream& os, const int level, const int indent) const;
+	void print(std::ostream& os, const size_t level, const size_t indent) const;
 };
