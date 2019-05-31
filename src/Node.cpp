@@ -5,8 +5,10 @@
 #include <cfloat>
 
 const double c = 2.0;
+const int threshold = 5;
 
-Node::Node(Node* parent, const Board& board, const Move move) : parent(parent), board(board), move(move), score(0.0), visits(0), winScore(0) {
+Node::Node(Node* parent, const Board& board, const Move move) : parent(parent),
+		board(board), move(move), score(0.0), visits(0), winScore(0) {
 	this->moves = this->board.moveList();
 	auto rng = std::default_random_engine {};
 	std::shuffle(std::begin(this->moves), std::end(this->moves), rng);
@@ -40,11 +42,24 @@ Node* Node::addChild(const Move move) {
 
 Node* Node::bestChild() const {
 	const int parentVisits = this->visits;
-	const auto& node = std::max_element( this->children.begin(), this->children.end(),
-			[&parentVisits](const auto& a, const auto& b) {
-				return a.get()->uct(parentVisits) < b.get()->uct(parentVisits);
-			});
-	return node->get();
+	
+	Node* bestNode = this->children.front().get();
+	double bestUct = -std::numeric_limits<double>::max();
+
+	for (const auto& ptr : this->children) {
+		if (ptr.get()->visits < threshold) {
+			return ptr.get();
+		}
+
+		const double uct = ptr.get()->uct(parentVisits);
+
+		if (uct > bestUct) {
+			bestNode = ptr.get();
+			bestUct = uct;
+		}
+	}
+
+	return bestNode;
 }
 
 double Node::uct(const int parentVisits) const {
