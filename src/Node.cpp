@@ -8,10 +8,20 @@ const double c = 2.0;
 const int threshold = 5;
 
 Node::Node(Node* parent, const Board& board, const Move move) : parent(parent),
-		board(board), move(move), score(0.0), visits(0), winScore(0) {
+		board(board), move(move), score(0.0), visits(0), winScore(0),
+		provenScore(ProvenScore::NotProven) {
 	this->moves = this->board.moveList();
 	auto rng = std::default_random_engine {};
 	std::shuffle(std::begin(this->moves), std::end(this->moves), rng);
+
+	if (board.isOver()) {
+		const Color winner = board.getWinner();
+		if (winner == Color::Both) {
+			this->provenScore = ProvenScore::Draw;
+		} else {
+			this->provenScore = ProvenScore::Win;
+		}
+	}
 }
 
 bool Node::isTerminal() const {
@@ -20,6 +30,10 @@ bool Node::isTerminal() const {
 
 bool Node::isExpanded() const {
 	return this->children.size() != 0 && this->moves.size() == this->children.size();
+}
+
+bool Node::isProven() const {
+	return this->provenScore != ProvenScore::NotProven;
 }
 
 Node* Node::expand() {
@@ -46,9 +60,32 @@ Node* Node::bestChild() const {
 	Node* bestNode = this->children.front().get();
 	double bestUct = -std::numeric_limits<double>::max();
 
+	Node* bestProvenNode = nullptr;
+	bool allNodesProven = true;
+
 	for (const auto& ptr : this->children) {
 		if (ptr.get()->visits < threshold) {
 			return ptr.get();
+		}
+
+		if (ptr.get()->provenScore == ProvenScore::Win) {
+			return ptr.get();
+		}
+
+		if (ptr.get()->provenScore == ProvenScore::Draw) {
+			bestProvenNode = ptr.get();
+			continue;
+		}
+
+		if (ptr.get()->provenScore == ProvenScore::Loss) {
+			if (!bestProvenNode) {
+				bestProvenNode = ptr.get();
+			}
+			continue;
+		}
+
+		if (ptr.get()->provenScore == ProvenScore::NotProven) {
+			allNodesProven = false;
 		}
 
 		const double uct = ptr.get()->uct(parentVisits);
@@ -57,6 +94,10 @@ Node* Node::bestChild() const {
 			bestNode = ptr.get();
 			bestUct = uct;
 		}
+	}
+
+	if (allNodesProven) {
+		return bestProvenNode;
 	}
 
 	return bestNode;
@@ -76,6 +117,7 @@ void Node::print(std::ostream& os, const int level, const int indent) const {
 		<< "Children: " << this->children.size() << ", "
 		<< "Color: " << this->board.getPlayer() << ", "
 		<< "Move: " << int(this->move) << ", "
+		<< "Proven: " << this->provenScore << ", "
 		<< "\n";
 
 	if (level-1 > 0) {
@@ -88,7 +130,7 @@ void Node::print(std::ostream& os, const int level, const int indent) const {
 void Node::updateWinnerRecursive(const Color winner) {
 	++this->visits;
 
-	if (winner == this->board.getPlayer()) {
+	if (winner == otherPlayer(this->board.getPlayer())) {
 		++this->winScore;
 	} else if (winner != Color::Both) {
 		--this->winScore;
@@ -98,5 +140,33 @@ void Node::updateWinnerRecursive(const Color winner) {
 
 	if (this->parent) {
 		this->parent->updateWinnerRecursive(winner);
+	}
+}
+
+void Node::updateProvenScoreRecursive(const ProvenScore provenScore) {
+	if (provenScore == ProvenScore::Win) {
+		this->provenScore = ProvenScore::Loss;
+	} else if (provenScore != ProvenScore::NotProven) {
+		ProvenScore best = ProvenScore::Loss;
+
+		for (const auto& ptr : this->children) {
+			if (!ptr.get()->isProven()) {
+				return;
+			}
+
+			if (ptr.get()->provenScore == ProvenScore::Draw) {
+				best = ProvenScore::Draw;
+			}
+		}
+
+		if (best == ProvenScore::Draw) {
+			this->provenScore = best;
+		} else {
+			this->provenScore = ProvenScore::Win;
+		}
+	}
+
+	if (this->parent) {
+		this->parent->updateProvenScoreRecursive(this->provenScore);
 	}
 }

@@ -81,8 +81,8 @@ void Board::randomGame() {
 }
 
 Color Board::getWinner() const {
-	if (__builtin_popcountll(this->board[2]) == 42) {
-		return Color::Both;
+	if (this->lastMoveWasWinningMove()) {
+		return otherPlayer(this->currentPlayer);
 	}
-	return this->currentPlayer;
+	return Color::Both;
 }
